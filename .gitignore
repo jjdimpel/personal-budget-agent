@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+charts/
+*.xlsx
+!sample_data/budget_template.xlsx
+
