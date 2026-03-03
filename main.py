@@ -13,19 +13,24 @@ import sys
 
 from budget_agent.budget import BudgetLoader
 from budget_agent.agent import BudgetAgent, console
+from budget_agent.autoloader import autoload, BUDGETS_DIR, TRANSACTIONS_DIR
 from sample_data.generate import generate_all_samples
 
 
-def interactive_chat(agent: BudgetAgent) -> None:
+def interactive_chat(agent: BudgetAgent, data_loaded: bool = False) -> None:
     console.print("\n[bold cyan]Personal Budget Agent[/bold cyan]")
     console.print("Type [bold]'quit'[/bold] or [bold]'exit'[/bold] to stop. Type [bold]'reset'[/bold] to clear data.\n")
-    console.print("Example commands:")
-    console.print("  • Load my budget from budget.xlsx")
-    console.print("  • Load my Chase credit card from sample_data/chase_sample.csv")
-    console.print("  • Load my Venmo from sample_data/venmo_sample.csv")
-    console.print("  • How am I doing this month?")
-    console.print("  • What are my top 5 biggest expenses?")
-    console.print("  • Generate charts\n")
+    if data_loaded:
+        console.print("Try asking:")
+        console.print("  • How am I doing this month?")
+        console.print("  • What are my top 5 biggest expenses?")
+        console.print("  • Show me a spending breakdown chart\n")
+    else:
+        console.print(f"Drop your files into the data folders, then restart — or load manually:")
+        console.print(f"  • Budget (.xlsx)  →  [bold]{BUDGETS_DIR}/[/bold]")
+        console.print(f"  • Transactions (.csv)  →  [bold]{TRANSACTIONS_DIR}/[/bold]")
+        console.print("  • Or: Load my budget from budget.xlsx")
+        console.print("  • Or: Load my Chase CSV from chase.csv\n")
 
     while True:
         try:
@@ -75,7 +80,14 @@ def main() -> None:
         sys.exit(0)
 
     agent = BudgetAgent(model=args.model)
-    interactive_chat(agent)
+
+    console.print("\n[bold]Scanning for data files...[/bold]")
+    load_messages = autoload(agent)
+    for msg in load_messages:
+        console.print(f"  {msg}")
+    data_loaded = agent._budget or not agent._parser.dataframe.empty
+
+    interactive_chat(agent, data_loaded=data_loaded)
 
 
 if __name__ == "__main__":
