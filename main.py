@@ -11,6 +11,9 @@ Usage:
 import argparse
 import sys
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from budget_agent.budget import BudgetLoader
 from budget_agent.agent import BudgetAgent, console
 from budget_agent.autoloader import autoload, BUDGETS_DIR, TRANSACTIONS_DIR

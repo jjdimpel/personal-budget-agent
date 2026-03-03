@@ -6,6 +6,9 @@ charts/
 *.xlsx
 !sample_data/budget_template.xlsx
 
+# Environment / secrets — keep out of git
+.env
+
 # Personal financial data — keep out of git
 data/budgets/*.xlsx
 data/transactions/*.csv
